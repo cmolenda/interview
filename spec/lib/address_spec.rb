@@ -92,6 +92,37 @@ RSpec.describe Address do
     end
   end
 
+
+  describe '::from_coordinates' do
+    let(:lat_2) { 40.181306 }
+    let(:lng_2) { -80.265949 }
+    let(:coordinates) { [[lat, lng], [lat_2, lng_2]] }
+    let(:full_address_2) { '31-99 N Pennsylvania Ave, Washington, PA 15301, USA' }
+
+    let(:geo_resp_params_2) {
+      [
+        {
+          'latitude'     => lat_2,
+          'longitude'    => lng_2,
+          'address'      => full_address_2,
+          'state'        => 'Washington',
+          'state_code'   => 'PA',
+          'country'      => 'United States',
+          'country_code' => 'US'
+        }
+      ]
+    }
+
+    before do
+      Geocoder::Lookup::Test.add_stub [lat_2, lng_2], geo_resp_params_2
+    end
+
+    it 'returns a reverse geolocated addresses for each coordinate' do
+      expect(Address.from_coordinates(*coordinates).map(&:full_address))
+        .to eq([full_address, full_address_2])
+    end
+  end
+
   # MOVE THIS TO A SERVICE
   # describe 'distance finding' do
   #   let(:detroit) { FactoryGirl.build :address, :as_detroit }

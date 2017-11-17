@@ -3,6 +3,15 @@ require_relative 'geocoding'
 class Address
   attr_reader :lat, :lng, :full_address
 
+  class << self
+    def from_coordinates(*coordinate_pairs)
+      coordinate_pairs.map do |(latitude, longitude)|
+        new(lat: latitude, lng: longitude)
+          .reverse_geocode!
+      end
+    end
+  end
+
   def initialize(lat: nil, lng: nil, full_address: nil)
     @lat = lat
     @lng = lng
