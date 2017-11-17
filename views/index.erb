@@ -5,8 +5,8 @@
         Show me the data!
       </h1>
 
-      <table>
-        <thead><th>Full Address<th></thead>
+      <table class='table table-striped table-hover'>
+        <thead><th>Full Address</th></thead>
         <% addresses.each do |address| %>
           <tr><td><%= address.full_address %></td></tr>
         <% end %>
