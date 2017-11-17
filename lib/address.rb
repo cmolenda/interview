@@ -16,14 +16,6 @@ class Address
     @lat = lat
     @lng = lng
     @full_address = full_address
-
-    # NOTE: For the sake of this interview application
-    # there doesn't seem to be any benefit to delaying the
-    # geocoding. By calculating it up front, we avoid
-    # an object with state
-
-    # geocode! unless geocoded?
-    # reverse_geocode! unless reverse_geocoded?
   end
 
   def geocoded?
