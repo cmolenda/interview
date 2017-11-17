@@ -35,14 +35,25 @@ class Address
   end
 
   def geocode!
-    result = Geocoder.search(full_address)&.first
-    @lat = result&.latitude
-    @lng = result&.longitude
+    unless geocoded?
+      result = Geocoder.search(full_address)&.first
+      @lat = result&.latitude
+      @lng = result&.longitude
+    end
+
     self
   end
 
   def reverse_geocode!
-    @full_address = Geocoder.address [lat, lng]
+    @full_address = Geocoder.address [lat, lng] unless reverse_geocoded?
     self
+  end
+
+  def miles_to(destination_address)
+    Geocoder::Calculations.distance_between coordinates, destination_address.coordinates
+  end
+
+  def coordinates
+    [lat, lng]
   end
 end

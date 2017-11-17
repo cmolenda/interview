@@ -1,5 +1,9 @@
 FactoryGirl.define do
   factory :address do
+    initialize_with do
+      new **attributes
+    end
+
     lat { Faker::Address.latitude }
     lng { Faker::Address.longitude }
     full_address do

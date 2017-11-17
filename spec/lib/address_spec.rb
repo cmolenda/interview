@@ -64,6 +64,15 @@ RSpec.describe Address do
     context 'when latitude and longitude are available' do
       it { is_expected.to be_geocoded }
     end
+
+    context 'when already geocoded' do
+      subject(:address) { described_class.new lat: 0, lng: 0 }
+
+      it 'does not geocode' do
+        expect(Geocoder).not_to receive(:search)
+        address.geocode!
+      end
+    end
   end
 
   describe 'reverse geocoding' do
@@ -77,6 +86,15 @@ RSpec.describe Address do
 
     it 'is considered reverse_geocoded' do
       expect(address).to be_reverse_geocoded
+    end
+
+    context 'when already reverse geocoded' do
+      subject(:address) { described_class.new lat: nil, lng: nil, full_address: 'fake' }
+
+      it 'does not reverse geocode' do
+        expect(Geocoder).not_to receive(:search)
+        address.reverse_geocode!
+      end
     end
   end
 
@@ -123,17 +141,24 @@ RSpec.describe Address do
     end
   end
 
-  # MOVE THIS TO A SERVICE
-  # describe 'distance finding' do
-  #   let(:detroit) { FactoryGirl.build :address, :as_detroit }
-  #   let(:kansas_city) { FactoryGirl.build :address, :as_kansas_city }
+  describe '#coordinates' do
+    it 'returns an array of latitude and longitude' do
+      expect(address.coordinates).to eq([lat, lng])
+    end
+  end
 
-  #   xit 'calculates distance with the Geocoder API' do
-  #     expect(Geocoder::Calculations).to receive(:distance_between).with detroit.coordinates, kansas_city.coordinates
-  #   end
+  describe 'distance finding' do
+    let(:detroit) { FactoryGirl.build :address, :as_detroit }
+    let(:kansas_city) { FactoryGirl.build :address, :as_kansas_city }
 
-  #   xit 'returns the distance between two addresses' do
-  #     expect(detroit.miles_to(kansas_city)).to be > 0
-  #   end
-  # end
+    # This test feels brittle/describes implementation
+    it 'calculates distance with the Geocoder API' do
+      expect(Geocoder::Calculations).to receive(:distance_between).with detroit.coordinates, kansas_city.coordinates
+      detroit.miles_to kansas_city
+    end
+
+    it 'returns the distance between two addresses' do
+      expect(detroit.miles_to(kansas_city)).to be > 0
+    end
+  end
 end
