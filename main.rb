@@ -26,7 +26,7 @@ class Main < Sinatra::Base
           miles = whitehouse.miles_to address
           display_address.new address.full_address, miles
         }
-        .sort { |a, b| b.miles_to_the_whitehouse <=> a.miles_to_the_whitehouse }
+        .sort_by(&:miles_to_the_whitehouse)
 
     erb :index,  locals: { addresses: display_addresses }
   end
